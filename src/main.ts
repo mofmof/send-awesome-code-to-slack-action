@@ -1,14 +1,28 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import {Octokit} from '@octokit/rest'
+import {readFileSync} from 'node:fs'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    const gitHubToken: string = core.getInput('github_token')
+    const gitHubEventPath: string = core.getInput('github_event_path')
+    core.debug(`Token is ${gitHubToken} ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
 
+    const gitHubEvent = readFileSync(gitHubEventPath)
+    core.debug(gitHubEvent.toString())
+    // core.debug(new Date().toTimeString())
     core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
+
+    const octokit = new Octokit({
+      auth: gitHubToken
+    })
+    const res = await octokit.rest.repos.getContent({
+      owner: 'mofmof',
+      repo: 'send-awesome-code-to-slack-action',
+      path: 'README.md'
+    })
+
+    core.debug(JSON.stringify(res))
 
     core.setOutput('time', new Date().toTimeString())
   } catch (error) {
