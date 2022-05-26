@@ -38,17 +38,16 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const rest_1 = __nccwpck_require__(5375);
 const node_fs_1 = __nccwpck_require__(3994);
-// import {wait} from './wait'
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const gitHubToken = core.getInput('github_token');
             const gitHubEventPath = core.getInput('github_event_path');
             core.debug(`Token is ${gitHubToken} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
-            const gitHubEvent = (0, node_fs_1.readFileSync)(gitHubEventPath);
+            const gitHubEvent = JSON.parse((0, node_fs_1.readFileSync)(gitHubEventPath, 'utf8'));
+            // gitHubEvent.comment.id
             core.debug(gitHubEvent.toString());
             // core.debug(new Date().toTimeString())
-            // await wait(parseInt(ms, 10))
             core.debug(new Date().toTimeString());
             const octokit = new rest_1.Octokit({
                 auth: gitHubToken
