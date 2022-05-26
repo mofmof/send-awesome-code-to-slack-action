@@ -1,10 +1,21 @@
 import * as core from '@actions/core'
 // import {Octokit} from '@octokit/rest'
-// import {WebClient} from '@slack/web-api'
+import {WebClient} from '@slack/web-api'
 import {readFileSync} from 'fs'
 
 type GitHubEvent = {
   comment: {
+    _links: {
+      html: {
+        href: string
+      }
+      pull_request: {
+        href: string
+      }
+      self: {
+        href: string
+      }
+    }
     body: string
     id: string
     node_id: string
@@ -16,14 +27,27 @@ type GitHubEvent = {
     position: number
     pull_request_review_id: string
     diff_hunk: string
+    html_url: string
+  }
+  name: string
+  html_url: string
+  owner: {
+    avatar_url: string
+  }
+  sender: {
+    avatar_url: string
+    html_url: string
+    login: string
   }
 }
+
+const KEYWORD = '[mofmof]'
 
 async function run(): Promise<void> {
   try {
     const gitHubToken: string = core.getInput('github_token')
     const gitHubEventPath: string = core.getInput('github_event_path')
-    // const slackToken: string = core.getInput('slack_token')
+    const slackToken: string = core.getInput('slack_token')
     core.debug(`Token is ${gitHubToken} ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
 
     const gitHubEventText = readFileSync(gitHubEventPath, {
@@ -32,8 +56,8 @@ async function run(): Promise<void> {
     const gitHubEvent: GitHubEvent = JSON.parse(gitHubEventText)
     // core.debug(JSON.stringify(gitHubEvent.comment))
 
-    if (!gitHubEvent.comment.body.includes('[mofmof]')) {
-      core.debug('No [mofmof] found in body')
+    if (!gitHubEvent.comment.body.includes(KEYWORD)) {
+      core.debug(`No ${KEYWORD} found in body`)
       return core.setOutput('time', new Date().toTimeString())
     }
 
@@ -50,13 +74,47 @@ async function run(): Promise<void> {
 
     // core.debug(JSON.stringify(res))
 
-    // const web = new WebClient(slackToken)
+    const web = new WebClient(slackToken)
 
-    // web.chat.postMessage({
-    //   text: 'Hello world!',
-    //   channel: '#work'
-    // })
+    const res = await web.chat.postMessage({
+      blocks: [
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `<${gitHubEvent.sender.login}|${
+              gitHubEvent.sender.html_url
+            }>\n :tech:\n ${gitHubEvent.comment.body.replace(KEYWORD, '')}`
+          },
+          accessory: {
+            type: 'image',
+            image_url: gitHubEvent.sender.avatar_url,
+            alt_text: gitHubEvent.sender.login
+          }
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `
+\`\`\`
+${gitHubEvent.comment.diff_hunk}
+\`\`\`
+            `
+          }
+        },
+        {
+          type: 'section',
+          text: {
+            type: 'mrkdwn',
+            text: `<${gitHubEvent.name}|${gitHubEvent.name}>`
+          }
+        }
+      ],
+      channel: '#work'
+    })
 
+    core.debug(JSON.stringify(res))
     core.setOutput('time', new Date().toTimeString())
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
