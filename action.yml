@@ -1,4 +1,4 @@
-name: '良いコード片をコメントとともにSlackへ投げる君'
+name: 'send-awesome-code-to-slack'
 description: '良いコード片をコメントとともにSlackへ投げるのが得意です'
 author: 'mofmof'
 inputs:
