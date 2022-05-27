@@ -56,6 +56,7 @@ function run() {
             const gitHubToken = core.getInput('github_token');
             const gitHubEventPath = core.getInput('github_event_path');
             const slackToken = core.getInput('slack_token');
+            const slackChannel = core.getInput('slack_channel');
             core.debug(`Token is ${gitHubToken} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
             const gitHubEventText = (0, fs_1.readFileSync)(gitHubEventPath, {
                 encoding: 'utf-8'
@@ -120,7 +121,7 @@ function run() {
                         }
                     }
                 ],
-                channel: '#work'
+                channel: `#${slackChannel}`
             });
             core.debug(JSON.stringify(slackResponse));
             core.setOutput('time', new Date().toTimeString());
