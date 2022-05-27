@@ -1,13 +1,16 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: '良いコード片をコメントとともにSlackへ投げる君'
+description: '良いコード片をコメントとともにSlackへ投げるのが得意です'
+author: 'mofmof'
 inputs:
   gitHubToken:
     required: true
     description: 'GitHub Token'
   gitHubEventPath:
     required: true
-    description: 'GitHub Token'
+    description: 'GitHub Event Path'
+  slackToken:
+    required: true
+    description: 'Slack Token'
 
 runs:
   using: 'node16'
