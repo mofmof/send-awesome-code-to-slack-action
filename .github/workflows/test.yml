@@ -21,4 +21,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: ./
         with:
-          milliseconds: 1000
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          gitHubEventPath: ${{ secrets.GIT_HUB_EVENT_PATH }}
+          slackToken: ${{ secrets.SLACK_TOKEN }}
+          slackChannel: ${{ secrets.SLACK_CHANNEL }}

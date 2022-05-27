@@ -49,6 +49,7 @@ async function run(): Promise<void> {
     const gitHubToken: string = core.getInput('github_token')
     const gitHubEventPath: string = core.getInput('github_event_path')
     const slackToken: string = core.getInput('slack_token')
+    const slackChannel: string = core.getInput('slack_channel')
     core.debug(`Token is ${gitHubToken} ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
 
     const gitHubEventText = readFileSync(gitHubEventPath, {
@@ -124,7 +125,7 @@ async function run(): Promise<void> {
           }
         }
       ],
-      channel: '#work'
+      channel: `#${slackChannel}`
     })
 
     core.debug(JSON.stringify(slackResponse))
