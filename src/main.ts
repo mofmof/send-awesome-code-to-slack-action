@@ -1,5 +1,6 @@
 import * as core from '@actions/core'
-// import {Octokit} from '@octokit/rest'
+import {Buffer} from 'buffer'
+import {Octokit} from '@octokit/rest'
 import {WebClient} from '@slack/web-api'
 import {readFileSync} from 'fs'
 
@@ -27,12 +28,12 @@ type GitHubEvent = {
     position: number
     pull_request_review_id: string
     diff_hunk: string
+    name: string
     html_url: string
-  }
-  name: string
-  html_url: string
-  owner: {
-    avatar_url: string
+    owner: {
+      avatar_url: string
+      login: string
+    }
   }
   sender: {
     avatar_url: string
@@ -54,7 +55,7 @@ async function run(): Promise<void> {
       encoding: 'utf-8'
     }).toString()
     const gitHubEvent: GitHubEvent = JSON.parse(gitHubEventText)
-    // core.debug(JSON.stringify(gitHubEvent.comment))
+    // core.debug(JSON.stringify(gitHubEvent))
 
     if (!gitHubEvent.comment.body.includes(KEYWORD)) {
       core.debug(`No ${KEYWORD} found in body`)
@@ -63,20 +64,32 @@ async function run(): Promise<void> {
 
     core.debug(new Date().toTimeString())
 
-    // const octokit = new Octokit({
-    //   auth: gitHubToken
-    // })
-    // const res = await octokit.rest.repos.getContent({
-    //   owner: 'mofmof',
-    //   repo: 'send-awesome-code-to-slack-action',
-    //   path: 'README.md'
-    // })
+    const octokit = new Octokit({
+      auth: gitHubToken
+    })
 
-    // core.debug(JSON.stringify(res))
+    const res = await octokit.rest.repos.getContent({
+      owner: gitHubEvent.comment.owner.login,
+      repo: gitHubEvent.comment.name,
+      path: gitHubEvent.comment.path
+    })
+    // core.debug(JSON.stringify(res.data))
+
+    // @ts-ignore
+    const content = Buffer.from(res.data.content ?? '', 'base64').toString()
+    const lines = content
+      .split('\n')
+      .filter(
+        (_line, index) =>
+          index >= (gitHubEvent.comment.original_start_line ?? 0) &&
+          index <= gitHubEvent.comment.original_line
+      )
+
+    core.debug(lines.join('\n'))
 
     const web = new WebClient(slackToken)
 
-    const res = await web.chat.postMessage({
+    const slackResponse = await web.chat.postMessage({
       blocks: [
         {
           type: 'section',
@@ -97,24 +110,24 @@ async function run(): Promise<void> {
           text: {
             type: 'mrkdwn',
             text: `
-\`\`\`
-${gitHubEvent.comment.diff_hunk}
-\`\`\`
-            `
+    \`\`\`
+    ${lines.join('\n')}
+    \`\`\`
+                    `
           }
         },
         {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<${gitHubEvent.name}|${gitHubEvent.name}>`
+            text: `<${gitHubEvent.comment.name}|${gitHubEvent.comment.html_url}>`
           }
         }
       ],
       channel: '#work'
     })
 
-    core.debug(JSON.stringify(res))
+    core.debug(JSON.stringify(slackResponse))
     core.setOutput('time', new Date().toTimeString())
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
