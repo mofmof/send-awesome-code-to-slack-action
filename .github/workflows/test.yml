@@ -12,6 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" > .env
+          echo "GIT_HUB_EVENT_PATH=${{ secrets.GIT_HUB_EVENT_PATH }}" >> .env
+          echo "SLACK_TOKEN=${{ secrets.SLACK_TOKEN }}" >> .env
+          echo "SLACK_CHANNEL=${{ secrets.SLACK_CHANNEL }}" >> .env
           npm install
       - run: |
           npm run all
