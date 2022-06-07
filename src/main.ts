@@ -56,7 +56,7 @@ async function run(): Promise<void> {
       encoding: 'utf-8'
     }).toString()
     const gitHubEvent: GitHubEvent = JSON.parse(gitHubEventText)
-    // core.debug(JSON.stringify(gitHubEvent))
+    core.info(JSON.stringify(gitHubEvent))
 
     if (!gitHubEvent.comment.body.includes(KEYWORD)) {
       core.debug(`No ${KEYWORD} found in body`)
