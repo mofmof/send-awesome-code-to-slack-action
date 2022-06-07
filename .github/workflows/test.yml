@@ -10,10 +10,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: report analisys table change
-      run: |
-        echo "GITHUB_EVENT_PATH is ${GITHUB_EVENT_PATH}."
-        cat ${GITHUB_EVENT_PATH} | jq .
+      - name: show event json
+        run: |
+          echo "GITHUB_EVENT_PATH is ${GITHUB_EVENT_PATH}."
+          cat ${GITHUB_EVENT_PATH} | jq .
       - uses: ./
         with:
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
