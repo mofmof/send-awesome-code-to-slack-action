@@ -62,7 +62,7 @@ function run() {
                 encoding: 'utf-8'
             }).toString();
             const gitHubEvent = JSON.parse(gitHubEventText);
-            // core.debug(JSON.stringify(gitHubEvent))
+            core.info(JSON.stringify(gitHubEvent));
             if (!gitHubEvent.comment.body.includes(KEYWORD)) {
                 core.debug(`No ${KEYWORD} found in body`);
                 return core.setOutput('time', new Date().toTimeString());
