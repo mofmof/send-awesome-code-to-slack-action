@@ -1,24 +1,12 @@
-name: 'build-test'
-on: # rebuild any PRs and main branch changes
+name: 'test'
+on:
   issue_comment:
     types: [created]
   pull_request_review_comment:
     types: [created]
 
 jobs:
-  build: # make sure build/ci work properly
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - run: |
-          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" > .env
-          echo "GIT_HUB_EVENT_PATH=${{ secrets.GIT_HUB_EVENT_PATH }}" >> .env
-          echo "SLACK_TOKEN=${{ secrets.SLACK_TOKEN }}" >> .env
-          echo "SLACK_CHANNEL=${{ secrets.SLACK_CHANNEL }}" >> .env
-          npm install
-      - run: |
-          npm run all
-  test: # make sure the action works on a clean machine without building
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
