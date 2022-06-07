@@ -1,5 +1,5 @@
-import {config} from 'dotenv'
-config()
+// import {config} from 'dotenv'
+// config()
 
 import * as process from 'process'
 import * as cp from 'child_process'
