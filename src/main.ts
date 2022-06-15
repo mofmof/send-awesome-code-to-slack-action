@@ -59,7 +59,9 @@ async function run(): Promise<void> {
     const slackChannel: string = core.getInput('slack_channel')
     core.debug(`Token is ${githubToken} ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
 
-    core.info(`getInput end -------------`)
+    core.info(
+      `getInput end ------------- token is ${githubToken ? 'present' : 'null'}`
+    )
 
     const githubEventText = readFileSync(githubEventPath, {
       encoding: 'utf-8'
