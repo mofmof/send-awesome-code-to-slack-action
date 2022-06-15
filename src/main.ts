@@ -47,21 +47,21 @@ const KEYWORD = '[mofmof]'
 async function run(): Promise<void> {
   core.info('start -------------')
   try {
-    const gitHubToken: string = core.getInput('github_token')
-    const gitHubEventPath: string = core.getInput('github_event_path')
+    const githubToken: string = core.getInput('github_token')
+    const githubEventPath: string = core.getInput('github_event_path')
     const slackToken: string = core.getInput('slack_token')
     const slackChannel: string = core.getInput('slack_channel')
-    core.debug(`Token is ${gitHubToken} ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+    core.debug(`Token is ${githubToken} ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
 
-    core.info(`start ------------- + ${gitHubEventPath}`)
+    core.info(`start ------------- + ${githubEventPath}`)
 
-    const gitHubEventText = readFileSync(gitHubEventPath, {
+    const githubEventText = readFileSync(githubEventPath, {
       encoding: 'utf-8'
     }).toString()
-    const gitHubEvent: GitHubEvent = JSON.parse(gitHubEventText)
-    core.info(JSON.stringify(gitHubEvent))
+    const githubEvent: GitHubEvent = JSON.parse(githubEventText)
+    core.info(JSON.stringify(githubEvent))
 
-    if (!gitHubEvent.comment.body.includes(KEYWORD)) {
+    if (!githubEvent.comment.body.includes(KEYWORD)) {
       core.debug(`No ${KEYWORD} found in body`)
       return core.setOutput('time', new Date().toTimeString())
     }
@@ -69,13 +69,13 @@ async function run(): Promise<void> {
     core.debug(new Date().toTimeString())
 
     const octokit = new Octokit({
-      auth: gitHubToken
+      auth: githubToken
     })
 
     const res = await octokit.rest.repos.getContent({
-      owner: gitHubEvent.comment.owner.login,
-      repo: gitHubEvent.comment.name,
-      path: gitHubEvent.comment.path
+      owner: githubEvent.comment.owner.login,
+      repo: githubEvent.comment.name,
+      path: githubEvent.comment.path
     })
     // core.debug(JSON.stringify(res.data))
 
@@ -85,8 +85,8 @@ async function run(): Promise<void> {
       .split('\n')
       .filter(
         (_line, index) =>
-          index >= (gitHubEvent.comment.original_start_line ?? 0) &&
-          index <= gitHubEvent.comment.original_line
+          index >= (githubEvent.comment.original_start_line ?? 0) &&
+          index <= githubEvent.comment.original_line
       )
 
     core.debug(lines.join('\n'))
@@ -99,14 +99,14 @@ async function run(): Promise<void> {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<${gitHubEvent.sender.login}|${
-              gitHubEvent.sender.html_url
-            }>\n :tech:\n ${gitHubEvent.comment.body.replace(KEYWORD, '')}`
+            text: `<${githubEvent.sender.login}|${
+              githubEvent.sender.html_url
+            }>\n :tech:\n ${githubEvent.comment.body.replace(KEYWORD, '')}`
           },
           accessory: {
             type: 'image',
-            image_url: gitHubEvent.sender.avatar_url,
-            alt_text: gitHubEvent.sender.login
+            image_url: githubEvent.sender.avatar_url,
+            alt_text: githubEvent.sender.login
           }
         },
         {
@@ -124,7 +124,7 @@ async function run(): Promise<void> {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<${gitHubEvent.comment.name}|${gitHubEvent.comment.html_url}>`
+            text: `<${githubEvent.comment.name}|${githubEvent.comment.html_url}>`
           }
         }
       ],

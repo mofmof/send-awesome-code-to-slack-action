@@ -2,10 +2,10 @@ name: 'send-awesome-code-to-slack'
 description: '良いコード片をコメントとともにSlackへ投げるのが得意です'
 author: 'mofmof'
 inputs:
-  gitHubToken:
+  githubToken:
     required: true
     description: 'GitHub Token'
-  gitHubEventPath:
+  githubEventPath:
     required: true
     description: 'GitHub Event Path'
   slackToken:

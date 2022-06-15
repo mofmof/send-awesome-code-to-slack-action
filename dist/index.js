@@ -54,28 +54,28 @@ function run() {
     return __awaiter(this, void 0, void 0, function* () {
         core.info('start -------------');
         try {
-            const gitHubToken = core.getInput('github_token');
-            const gitHubEventPath = core.getInput('github_event_path');
+            const githubToken = core.getInput('github_token');
+            const githubEventPath = core.getInput('github_event_path');
             const slackToken = core.getInput('slack_token');
             const slackChannel = core.getInput('slack_channel');
-            core.debug(`Token is ${gitHubToken} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
-            const gitHubEventText = (0, fs_1.readFileSync)(gitHubEventPath, {
+            core.debug(`Token is ${githubToken} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
+            const githubEventText = (0, fs_1.readFileSync)(githubEventPath, {
                 encoding: 'utf-8'
             }).toString();
-            const gitHubEvent = JSON.parse(gitHubEventText);
-            core.info(JSON.stringify(gitHubEvent));
-            if (!gitHubEvent.comment.body.includes(KEYWORD)) {
+            const githubEvent = JSON.parse(githubEventText);
+            core.info(JSON.stringify(githubEvent));
+            if (!githubEvent.comment.body.includes(KEYWORD)) {
                 core.debug(`No ${KEYWORD} found in body`);
                 return core.setOutput('time', new Date().toTimeString());
             }
             core.debug(new Date().toTimeString());
             const octokit = new rest_1.Octokit({
-                auth: gitHubToken
+                auth: githubToken
             });
             const res = yield octokit.rest.repos.getContent({
-                owner: gitHubEvent.comment.owner.login,
-                repo: gitHubEvent.comment.name,
-                path: gitHubEvent.comment.path
+                owner: githubEvent.comment.owner.login,
+                repo: githubEvent.comment.name,
+                path: githubEvent.comment.path
             });
             // core.debug(JSON.stringify(res.data))
             // @ts-ignore
@@ -84,8 +84,8 @@ function run() {
                 .split('\n')
                 .filter((_line, index) => {
                 var _a;
-                return index >= ((_a = gitHubEvent.comment.original_start_line) !== null && _a !== void 0 ? _a : 0) &&
-                    index <= gitHubEvent.comment.original_line;
+                return index >= ((_a = githubEvent.comment.original_start_line) !== null && _a !== void 0 ? _a : 0) &&
+                    index <= githubEvent.comment.original_line;
             });
             core.debug(lines.join('\n'));
             const web = new web_api_1.WebClient(slackToken);
@@ -95,12 +95,12 @@ function run() {
                         type: 'section',
                         text: {
                             type: 'mrkdwn',
-                            text: `<${gitHubEvent.sender.login}|${gitHubEvent.sender.html_url}>\n :tech:\n ${gitHubEvent.comment.body.replace(KEYWORD, '')}`
+                            text: `<${githubEvent.sender.login}|${githubEvent.sender.html_url}>\n :tech:\n ${githubEvent.comment.body.replace(KEYWORD, '')}`
                         },
                         accessory: {
                             type: 'image',
-                            image_url: gitHubEvent.sender.avatar_url,
-                            alt_text: gitHubEvent.sender.login
+                            image_url: githubEvent.sender.avatar_url,
+                            alt_text: githubEvent.sender.login
                         }
                     },
                     {
@@ -118,7 +118,7 @@ function run() {
                         type: 'section',
                         text: {
                             type: 'mrkdwn',
-                            text: `<${gitHubEvent.comment.name}|${gitHubEvent.comment.html_url}>`
+                            text: `<${githubEvent.comment.name}|${githubEvent.comment.html_url}>`
                         }
                     }
                 ],
@@ -653,8 +653,8 @@ class OidcClient {
             const res = yield httpclient
                 .getJson(id_token_url)
                 .catch(error => {
-                throw new Error(`Failed to get ID Token. \n 
-        Error Code : ${error.statusCode}\n 
+                throw new Error(`Failed to get ID Token. \n
+        Error Code : ${error.statusCode}\n
         Error Message: ${error.result.message}`);
             });
             const id_token = (_a = res.result) === null || _a === void 0 ? void 0 : _a.value;
@@ -17172,7 +17172,7 @@ module.exports = require("zlib");
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __nccwpck_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -17186,7 +17186,7 @@ module.exports = require("zlib");
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		var threw = true;
 /******/ 		try {
@@ -17195,24 +17195,24 @@ module.exports = require("zlib");
 /******/ 		} finally {
 /******/ 			if(threw) delete __webpack_module_cache__[moduleId];
 /******/ 		}
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat */
-/******/ 	
+/******/
 /******/ 	if (typeof __nccwpck_require__ !== 'undefined') __nccwpck_require__.ab = __dirname + "/";
-/******/ 	
+/******/
 /************************************************************************/
-/******/ 	
+/******/
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module is referenced by other modules so it can't be inlined
 /******/ 	var __webpack_exports__ = __nccwpck_require__(3109);
 /******/ 	module.exports = __webpack_exports__;
-/******/ 	
+/******/
 /******/ })()
 ;
 //# sourceMappingURL=index.js.map
