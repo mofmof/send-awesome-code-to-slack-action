@@ -22,10 +22,14 @@ import {expect, test} from '@jest/globals'
 // shows how the runner will run a javascript action with env / stdout protocol
 test('test runs', () => {
   const np = process.execPath
-  const ip = path.join(__dirname, '..', '..', 'lib', 'main.js')
-  const options: cp.ExecFileSyncOptions = {
-    env: process.env
+  const ip = path.join(__dirname, '..', 'lib', 'main.js')
+  const env = {
+    INPUT_GITHUB_TOKEN: process.env.GITHUB_TOKEN,
+    INPUT_GITHUB_EVENT_PATH: process.env.GITHUB_EVENT_PATH,
+    INPUT_SLACK_TOKEN: process.env.SLACK_TOKEN,
+    INPUT_SLACK_CHANNEL: process.env.SLACK_CHANNEL
   }
-  console.log({ip, np, options: Object.keys(process.env)})
+  const options: cp.ExecFileSyncOptions = {env}
+  console.log({ip, np, __dirname, options: Object.keys(process.env)})
   console.log(cp.execFileSync(np, [ip], options).toString())
 })
