@@ -17,7 +17,7 @@ jobs:
           cat ${github.event_path} | jq .
       - uses: ./
         with:
-          githubToken: ${{ secrets.GITHUB_TOKEN }}
-          githubEventPath: ${{ github.event_path }}
-          slackToken: ${{ secrets.SLACK_TOKEN }}
-          slackChannel: ${{ secrets.SLACK_CHANNEL }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_event_path: ${{ github.event_path }}
+          slack_token: ${{ secrets.SLACK_TOKEN }}
+          slack_channel: ${{ secrets.SLACK_CHANNEL }}
