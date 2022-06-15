@@ -30,7 +30,7 @@ type GitHubEvent = {
     diff_hunk: string
     name: string
     html_url: string
-    owner: {
+    user: {
       avatar_url: string
       login: string
     }
@@ -75,7 +75,7 @@ async function run(): Promise<void> {
     })
 
     const res = await octokit.rest.repos.getContent({
-      owner: githubEvent.comment.owner.login,
+      owner: githubEvent.comment.user.login,
       repo: githubEvent.comment.name,
       path: githubEvent.comment.path
     })
