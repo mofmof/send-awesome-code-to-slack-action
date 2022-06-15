@@ -14,9 +14,10 @@ jobs:
         run: |
           echo "GITHUB_EVENT_PATH is ${GITHUB_EVENT_PATH}."
           cat ${GITHUB_EVENT_PATH} | jq .
+          cat ${github.event_path} | jq .
       - uses: ./
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
-          githubEventPath: ${{ GITHUB_EVENT_PATH }}
+          githubEventPath: ${{ github.event_path }}
           slackToken: ${{ secrets.SLACK_TOKEN }}
           slackChannel: ${{ secrets.SLACK_CHANNEL }}
