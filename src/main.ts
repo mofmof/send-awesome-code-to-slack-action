@@ -40,15 +40,10 @@ type GitHubEvent = {
     html_url: string
     login: string
   }
-  pull_request: {
-    head: {
-      base: {
-        repo: {
-          owner: {
-            login: string
-          }
-        }
-      }
+  repository: {
+    name: string
+    owner: {
+      login: string
     }
   }
 }
@@ -87,8 +82,8 @@ async function run(): Promise<void> {
     core.info(`octokit initialized`)
 
     const res = await octokit.rest.repos.getContent({
-      owner: githubEvent.pull_request.head.base.repo.owner.login,
-      repo: githubEvent.comment.name,
+      owner: githubEvent.repository.owner.login,
+      repo: githubEvent.repository.name,
       path: githubEvent.comment.path
     })
 
