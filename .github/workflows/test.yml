@@ -10,11 +10,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: show event json
-        run: |
-          echo "GITHUB_EVENT_PATH is ${GITHUB_EVENT_PATH}."
-          cat ${GITHUB_EVENT_PATH} | jq .
-          cat ${github.event_path} | jq .
+      # - name: show event json
+      #   run: |
+      #     echo "GITHUB_EVENT_PATH is ${GITHUB_EVENT_PATH}."
+      #     cat ${GITHUB_EVENT_PATH} | jq .
+      #     cat ${github.event_path} | jq .
       - uses: ./
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
