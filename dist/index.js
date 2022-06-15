@@ -74,7 +74,7 @@ function run() {
                 auth: githubToken
             });
             const res = yield octokit.rest.repos.getContent({
-                owner: githubEvent.comment.owner.login,
+                owner: githubEvent.comment.user.login,
                 repo: githubEvent.comment.name,
                 path: githubEvent.comment.path
             });
