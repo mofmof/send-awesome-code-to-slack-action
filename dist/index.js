@@ -135,8 +135,10 @@ function run() {
             core.setOutput('time', new Date().toTimeString());
         }
         catch (error) {
-            if (error instanceof Error)
+            if (error instanceof Error) {
+                core.error(JSON.stringify(error.stack));
                 core.setFailed(error.message);
+            }
         }
     });
 }
