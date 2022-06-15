@@ -52,7 +52,7 @@ const KEYWORD = '[mofmof]';
 function run() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        core.info('start -------------');
+        core.info(`start -------------with ${JSON.stringify(Object.keys(process.env))}`);
         try {
             const githubToken = core.getInput('github_token');
             const githubEventPath = core.getInput('github_event_path');
