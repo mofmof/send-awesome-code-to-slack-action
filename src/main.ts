@@ -40,6 +40,17 @@ type GitHubEvent = {
     html_url: string
     login: string
   }
+  pull_request: {
+    head: {
+      base: {
+        repo: {
+          owner: {
+            login: string
+          }
+        }
+      }
+    }
+  }
 }
 
 const KEYWORD = '[mofmof]'
@@ -76,7 +87,7 @@ async function run(): Promise<void> {
     core.info(`octokit initialized`)
 
     const res = await octokit.rest.repos.getContent({
-      owner: githubEvent.comment.user.login,
+      owner: githubEvent.pull_request.head.base.repo.owner.login,
       repo: githubEvent.comment.name,
       path: githubEvent.comment.path
     })

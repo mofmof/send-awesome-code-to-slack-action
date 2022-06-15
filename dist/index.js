@@ -75,7 +75,7 @@ function run() {
             });
             core.info(`octokit initialized`);
             const res = yield octokit.rest.repos.getContent({
-                owner: githubEvent.comment.user.login,
+                owner: githubEvent.pull_request.head.base.repo.owner.login,
                 repo: githubEvent.comment.name,
                 path: githubEvent.comment.path
             });
