@@ -45,7 +45,9 @@ type GitHubEvent = {
 const KEYWORD = '[mofmof]'
 
 async function run(): Promise<void> {
-  core.info('start -------------')
+  core.info(
+    `start -------------with ${JSON.stringify(Object.keys(process.env))}`
+  )
   try {
     const githubToken: string = core.getInput('github_token')
     const githubEventPath: string = core.getInput('github_event_path')
