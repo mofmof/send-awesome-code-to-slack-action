@@ -17,6 +17,6 @@ jobs:
       - uses: ./
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
-          githubEventPath: ${{ secrets.GITHUB_EVENT_PATH }}
+          githubEventPath: ${{ GITHUB_EVENT_PATH }}
           slackToken: ${{ secrets.SLACK_TOKEN }}
           slackChannel: ${{ secrets.SLACK_CHANNEL }}
