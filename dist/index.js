@@ -52,37 +52,36 @@ const KEYWORD = '[mofmof]';
 function run() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
-        core.info(`start with ${JSON.stringify(Object.keys(process.env))}`);
+        core.debug(`start with ${JSON.stringify(Object.keys(process.env))}`);
         try {
             const githubToken = core.getInput('github_token');
             const githubEventPath = core.getInput('github_event_path');
             const slackToken = core.getInput('slack_token');
             const slackChannel = core.getInput('slack_channel');
-            core.debug(`Token is ${githubToken} ...`); // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
-            core.info(`getInput end ------------- token is ${githubToken ? 'present' : 'null'}`);
+            core.debug(`getInput end, token is ${githubToken ? 'present' : 'null'}`);
             const githubEventText = (0, fs_1.readFileSync)(githubEventPath, {
                 encoding: 'utf-8'
             }).toString();
             const githubEvent = JSON.parse(githubEventText);
-            core.info(JSON.stringify(githubEvent));
+            core.debug(JSON.stringify(githubEvent));
             if (!githubEvent.comment.body.includes(KEYWORD)) {
-                core.debug(`No ${KEYWORD} found in body`);
+                core.info(`No ${KEYWORD} found in body`);
                 return core.setOutput('time', new Date().toTimeString());
             }
-            core.info(`${KEYWORD} found`);
+            core.debug(`${KEYWORD} found`);
             const octokit = new rest_1.Octokit({
                 auth: githubToken
             });
-            core.info(`octokit initialized`);
+            core.debug(`octokit initialized`);
             const res = yield octokit.rest.repos.getContent({
                 owner: githubEvent.repository.owner.login,
                 repo: githubEvent.repository.name,
                 path: githubEvent.comment.path
             });
-            core.info(`octokit response is ${JSON.stringify(res)}`);
+            core.debug(`octokit response is ${JSON.stringify(res)}`);
             // core.debug(JSON.stringify(res.data))
             // @ts-ignore
-            core.info(`octokit res data content is ${res.data.content}`);
+            core.debug(`octokit res data content is ${res.data.content}`);
             // @ts-ignore
             const content = buffer_1.Buffer.from((_a = res.data.content) !== null && _a !== void 0 ? _a : '', 'base64').toString();
             const lines = content
@@ -94,14 +93,14 @@ function run() {
             });
             core.debug(lines.join('\n'));
             const web = new web_api_1.WebClient(slackToken);
-            core.info(`web client initialized`);
+            core.debug(`web client initialized`);
             const slackResponse = yield web.chat.postMessage({
                 blocks: [
                     {
                         type: 'section',
                         text: {
                             type: 'mrkdwn',
-                            text: `<${githubEvent.sender.login}|${githubEvent.sender.html_url}>\n :tech:\n ${githubEvent.comment.body.replace(KEYWORD, '')}`
+                            text: `*<${githubEvent.sender.html_url}|${githubEvent.sender.login}> found a recommended code!*\n ${githubEvent.comment.body.replace(KEYWORD, '')}`
                         },
                         accessory: {
                             type: 'image',
@@ -124,19 +123,19 @@ function run() {
                         type: 'section',
                         text: {
                             type: 'mrkdwn',
-                            text: `<${githubEvent.comment.name}|${githubEvent.comment.html_url}>`
+                            text: `<${githubEvent.comment.html_url}|${githubEvent.comment.commit_id}>`
                         }
                     }
                 ],
                 channel: `#${slackChannel}`
             });
             core.debug(JSON.stringify(slackResponse));
-            core.info(`slack response is ${JSON.stringify(slackResponse)}`);
+            core.debug(`slack response is ${JSON.stringify(slackResponse)}`);
             core.setOutput('time', new Date().toTimeString());
         }
         catch (error) {
             if (error instanceof Error) {
-                core.error(JSON.stringify(error.stack));
+                core.debug(JSON.stringify(error.stack));
                 core.setFailed(error.message);
             }
         }

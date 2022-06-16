@@ -34,6 +34,7 @@ type GitHubEvent = {
       avatar_url: string
       login: string
     }
+    commit_id: string
   }
   sender: {
     avatar_url: string
@@ -51,37 +52,33 @@ type GitHubEvent = {
 const KEYWORD = '[mofmof]'
 
 async function run(): Promise<void> {
-  core.info(`start with ${JSON.stringify(Object.keys(process.env))}`)
+  core.debug(`start with ${JSON.stringify(Object.keys(process.env))}`)
   try {
     const githubToken: string = core.getInput('github_token')
     const githubEventPath: string = core.getInput('github_event_path')
     const slackToken: string = core.getInput('slack_token')
     const slackChannel: string = core.getInput('slack_channel')
-    core.debug(`Token is ${githubToken} ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
-
-    core.info(
-      `getInput end ------------- token is ${githubToken ? 'present' : 'null'}`
-    )
+    core.debug(`getInput end, token is ${githubToken ? 'present' : 'null'}`)
 
     const githubEventText = readFileSync(githubEventPath, {
       encoding: 'utf-8'
     }).toString()
     const githubEvent: GitHubEvent = JSON.parse(githubEventText)
 
-    core.info(JSON.stringify(githubEvent))
+    core.debug(JSON.stringify(githubEvent))
 
     if (!githubEvent.comment.body.includes(KEYWORD)) {
-      core.debug(`No ${KEYWORD} found in body`)
+      core.info(`No ${KEYWORD} found in body`)
       return core.setOutput('time', new Date().toTimeString())
     }
 
-    core.info(`${KEYWORD} found`)
+    core.debug(`${KEYWORD} found`)
 
     const octokit = new Octokit({
       auth: githubToken
     })
 
-    core.info(`octokit initialized`)
+    core.debug(`octokit initialized`)
 
     const res = await octokit.rest.repos.getContent({
       owner: githubEvent.repository.owner.login,
@@ -89,11 +86,11 @@ async function run(): Promise<void> {
       path: githubEvent.comment.path
     })
 
-    core.info(`octokit response is ${JSON.stringify(res)}`)
+    core.debug(`octokit response is ${JSON.stringify(res)}`)
     // core.debug(JSON.stringify(res.data))
 
     // @ts-ignore
-    core.info(`octokit res data content is ${res.data.content}`)
+    core.debug(`octokit res data content is ${res.data.content}`)
 
     // @ts-ignore
     const content = Buffer.from(res.data.content ?? '', 'base64').toString()
@@ -108,7 +105,7 @@ async function run(): Promise<void> {
     core.debug(lines.join('\n'))
 
     const web = new WebClient(slackToken)
-    core.info(`web client initialized`)
+    core.debug(`web client initialized`)
 
     const slackResponse = await web.chat.postMessage({
       blocks: [
@@ -116,9 +113,12 @@ async function run(): Promise<void> {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<${githubEvent.sender.login}|${
-              githubEvent.sender.html_url
-            }>\n :tech:\n ${githubEvent.comment.body.replace(KEYWORD, '')}`
+            text: `*<${githubEvent.sender.html_url}|${
+              githubEvent.sender.login
+            }> found a recommended code!*\n ${githubEvent.comment.body.replace(
+              KEYWORD,
+              ''
+            )}`
           },
           accessory: {
             type: 'image',
@@ -141,7 +141,7 @@ async function run(): Promise<void> {
           type: 'section',
           text: {
             type: 'mrkdwn',
-            text: `<${githubEvent.comment.name}|${githubEvent.comment.html_url}>`
+            text: `<${githubEvent.comment.html_url}|${githubEvent.comment.commit_id}>`
           }
         }
       ],
@@ -149,11 +149,11 @@ async function run(): Promise<void> {
     })
 
     core.debug(JSON.stringify(slackResponse))
-    core.info(`slack response is ${JSON.stringify(slackResponse)}`)
+    core.debug(`slack response is ${JSON.stringify(slackResponse)}`)
     core.setOutput('time', new Date().toTimeString())
   } catch (error) {
     if (error instanceof Error) {
-      core.error(JSON.stringify(error.stack))
+      core.debug(JSON.stringify(error.stack))
       core.setFailed(error.message)
     }
   }
