@@ -17,6 +17,7 @@ jobs:
       #     cat ${github.event_path} | jq .
       - uses: ./
         with:
+          trigger_keyword: "[mofmof]"
           github_token: ${{ secrets.GITHUB_TOKEN }}
           github_event_path: ${{ github.event_path }}
           slack_token: ${{ secrets.SLACK_TOKEN }}

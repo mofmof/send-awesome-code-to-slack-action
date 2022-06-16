@@ -48,12 +48,12 @@ const buffer_1 = __nccwpck_require__(4293);
 const rest_1 = __nccwpck_require__(5375);
 const web_api_1 = __nccwpck_require__(431);
 const fs_1 = __nccwpck_require__(5747);
-const KEYWORD = '[mofmof]';
 function run() {
     var _a;
     return __awaiter(this, void 0, void 0, function* () {
         core.debug(`start with ${JSON.stringify(Object.keys(process.env))}`);
         try {
+            const triggerKeyword = core.getInput('trigger_keyword');
             const githubToken = core.getInput('github_token');
             const githubEventPath = core.getInput('github_event_path');
             const slackToken = core.getInput('slack_token');
@@ -64,11 +64,11 @@ function run() {
             }).toString();
             const githubEvent = JSON.parse(githubEventText);
             core.debug(JSON.stringify(githubEvent));
-            if (!githubEvent.comment.body.includes(KEYWORD)) {
-                core.info(`No ${KEYWORD} found in body`);
+            if (!githubEvent.comment.body.includes(triggerKeyword)) {
+                core.info(`No ${triggerKeyword} found in body`);
                 return core.setOutput('time', new Date().toTimeString());
             }
-            core.debug(`${KEYWORD} found`);
+            core.debug(`${triggerKeyword} found`);
             const octokit = new rest_1.Octokit({
                 auth: githubToken
             });
@@ -100,7 +100,7 @@ function run() {
                         type: 'section',
                         text: {
                             type: 'mrkdwn',
-                            text: `*<${githubEvent.sender.html_url}|${githubEvent.sender.login}> found a recommended code!*\n ${githubEvent.comment.body.replace(KEYWORD, '')}`
+                            text: `*<${githubEvent.sender.html_url}|${githubEvent.sender.login}> found a recommended code!*\n ${githubEvent.comment.body.replace(triggerKeyword, '')}`
                         },
                         accessory: {
                             type: 'image',

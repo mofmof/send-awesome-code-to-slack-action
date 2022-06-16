@@ -49,11 +49,10 @@ type GitHubEvent = {
   }
 }
 
-const KEYWORD = '[mofmof]'
-
 async function run(): Promise<void> {
   core.debug(`start with ${JSON.stringify(Object.keys(process.env))}`)
   try {
+    const triggerKeyword: string = core.getInput('trigger_keyword')
     const githubToken: string = core.getInput('github_token')
     const githubEventPath: string = core.getInput('github_event_path')
     const slackToken: string = core.getInput('slack_token')
@@ -67,12 +66,12 @@ async function run(): Promise<void> {
 
     core.debug(JSON.stringify(githubEvent))
 
-    if (!githubEvent.comment.body.includes(KEYWORD)) {
-      core.info(`No ${KEYWORD} found in body`)
+    if (!githubEvent.comment.body.includes(triggerKeyword)) {
+      core.info(`No ${triggerKeyword} found in body`)
       return core.setOutput('time', new Date().toTimeString())
     }
 
-    core.debug(`${KEYWORD} found`)
+    core.debug(`${triggerKeyword} found`)
 
     const octokit = new Octokit({
       auth: githubToken
@@ -116,7 +115,7 @@ async function run(): Promise<void> {
             text: `*<${githubEvent.sender.html_url}|${
               githubEvent.sender.login
             }> found a recommended code!*\n ${githubEvent.comment.body.replace(
-              KEYWORD,
+              triggerKeyword,
               ''
             )}`
           },

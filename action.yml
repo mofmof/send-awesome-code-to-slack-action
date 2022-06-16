@@ -2,6 +2,9 @@ name: 'send-awesome-code-to-slack'
 description: '良いコード片をコメントとともにSlackへ投げるのが得意です'
 author: 'mofmof'
 inputs:
+  trigger_keyword:
+    required: true
+    description: 'If you find a keyword in a comment, it will be posted to slack.'
   github_token:
     required: true
     description: 'GitHub Token'

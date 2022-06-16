@@ -24,6 +24,7 @@ test('test runs', () => {
   const np = process.execPath
   const ip = path.join(__dirname, '..', 'lib', 'main.js')
   const env = {
+    INPUT_TRIGGER_KEYWORD: '[mofmof]',
     INPUT_GITHUB_TOKEN: process.env.GITHUB_TOKEN,
     INPUT_GITHUB_EVENT_PATH: process.env.GITHUB_EVENT_PATH,
     INPUT_SLACK_TOKEN: process.env.SLACK_TOKEN,

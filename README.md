@@ -19,6 +19,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: mofmof/send-awesome-code-to-slack-action@v0
         with:
+          trigger_keyword: '[awesome]'
           github_token: ${{ secrets.GITHUB_TOKEN }}
           github_event_path: ${{ github.event_path }}
           slack_token: ${{ secrets.SLACK_TOKEN }}
