@@ -1,0 +1,21 @@
+name: 'build'
+on: # rebuild any PRs and main branch changes
+  pull_request:
+  push:
+    branches:
+      - main
+      - 'releases/*'
+
+jobs:
+  build: # make sure build/ci work properly
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: |
+          echo "GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}" > .env
+          echo "GITHUB_EVENT_PATH=./__tests__/event.json" >> .env
+          echo "SLACK_TOKEN=${{ secrets.SLACK_TOKEN }}" >> .env
+          echo "SLACK_CHANNEL=${{ secrets.SLACK_CHANNEL }}" >> .env
+          npm install
+      - run: |
+          npm run all

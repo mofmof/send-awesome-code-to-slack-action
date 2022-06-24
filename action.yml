@@ -1,11 +1,27 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'send-awesome-code-to-slack'
+description: '良いコード片をコメントとともにSlackへ投げるのが得意です'
+author: 'mofmof'
 inputs:
-  milliseconds: # change this
+  trigger_keyword:
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'If you find a keyword in a comment, it will be posted to slack.'
+  github_token:
+    required: true
+    description: 'GitHub Token'
+  github_event_path:
+    required: true
+    description: 'GitHub Event Path'
+  slack_token:
+    required: true
+    description: 'Slack Token'
+  slack_channel:
+    required: true
+    description: 'Slack Channel'
+
 runs:
   using: 'node16'
   main: 'dist/index.js'
+
+branding:
+  icon: message-square
+  color: green
