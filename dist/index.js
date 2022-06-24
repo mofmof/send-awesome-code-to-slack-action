@@ -49,7 +49,7 @@ const rest_1 = __nccwpck_require__(5375);
 const web_api_1 = __nccwpck_require__(431);
 const fs_1 = __nccwpck_require__(5747);
 function run() {
-    var _a;
+    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         core.debug(`start with ${JSON.stringify(Object.keys(process.env))}`);
         try {
@@ -76,14 +76,15 @@ function run() {
             const res = yield octokit.rest.repos.getContent({
                 owner: githubEvent.repository.owner.login,
                 repo: githubEvent.repository.name,
-                path: githubEvent.comment.path
+                path: githubEvent.comment.path,
+                ref: (_a = githubEvent.pull_request) === null || _a === void 0 ? void 0 : _a.head.ref
             });
             core.debug(`octokit response is ${JSON.stringify(res)}`);
             // core.debug(JSON.stringify(res.data))
             // @ts-ignore
             core.debug(`octokit res data content is ${res.data.content}`);
             // @ts-ignore
-            const content = buffer_1.Buffer.from((_a = res.data.content) !== null && _a !== void 0 ? _a : '', 'base64').toString();
+            const content = buffer_1.Buffer.from((_b = res.data.content) !== null && _b !== void 0 ? _b : '', 'base64').toString();
             const lines = content
                 .split('\n')
                 .filter((_line, index) => {

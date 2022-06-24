@@ -47,6 +47,11 @@ type GitHubEvent = {
       login: string
     }
   }
+  pull_request?: {
+    head: {
+      ref: string
+    }
+  }
 }
 
 async function run(): Promise<void> {
@@ -82,7 +87,8 @@ async function run(): Promise<void> {
     const res = await octokit.rest.repos.getContent({
       owner: githubEvent.repository.owner.login,
       repo: githubEvent.repository.name,
-      path: githubEvent.comment.path
+      path: githubEvent.comment.path,
+      ref: githubEvent.pull_request?.head.ref
     })
 
     core.debug(`octokit response is ${JSON.stringify(res)}`)

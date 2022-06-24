@@ -258,7 +258,7 @@
     "draft": false,
     "head": {
       "label": "mofmof:dependabot/npm_and_yarn/types/node-17.0.43",
-      "ref": "dependabot/npm_and_yarn/types/node-17.0.43",
+      "ref": "main",
       "repo": {
         "allow_auto_merge": false,
         "allow_forking": true,
